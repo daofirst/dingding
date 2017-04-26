@@ -13,11 +13,12 @@
   "require": {
     "illuminate/config": "~5.0",
     "illuminate/support": "~5.0",
-    "illuminate/filesystem": "~5.0"
+    "illuminate/filesystem": "~5.0",
+    "curl/curl": "^1.6"
   },
   "autoload": {
     "psr-4": {
-      "daofirst\\DingDing\\": "src/"
+      "Daofirst\\DingDing\\": "src/"
     }
   },
   "config": {
