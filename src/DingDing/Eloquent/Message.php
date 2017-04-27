@@ -46,7 +46,7 @@ class Message implements MessageContract
 
             $response = $this->http->post(Http::joinPath('/message/send', ['access_token' => $accessToken]), $data);
 
-            return json_decode($response)->messageId;
+            return $response['messageId'];
 
         }catch (DingDingException $e){
             throw $e;

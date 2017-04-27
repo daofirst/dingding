@@ -38,6 +38,7 @@ class Http
         if($result->error){
             throw new DingDingException($result->error_message, $result->error_code);
         }
+        return json_decode($result, true);
     }
 
     /**
@@ -66,7 +67,7 @@ class Http
             throw new DingDingException('钉钉消息发送失败');
         }
 
-        return $result;
+        return json_decode($result, true);
     }
 
     /**

@@ -47,11 +47,6 @@ class Auth implements AuthInterface {
 				'corpsecret' => $corpSecret
 		]));
 
-		if ($accessToken->error)
-		{
-			throw new DingDingException($accessToken->error_message, $accessToken->error_code);
-		}
-
-		return json_decode($accessToken->response)->access_token;
+		return $accessToken['access_token'];
 	}
 }
