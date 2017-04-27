@@ -38,7 +38,8 @@ class Http
         if($result->error){
             throw new DingDingException($result->error_message, $result->error_code);
         }
-        return json_decode($result, true);
+
+        return json_decode($result->response, true);
     }
 
     /**
