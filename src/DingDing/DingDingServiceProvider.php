@@ -1,5 +1,5 @@
 <?php
-namespace DingDing\Providers;
+namespace DingDing;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -11,19 +11,16 @@ class DingDingServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      *
-     * @return void
      */
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../..//resources/config/dingding.php' => config_path('dingding.php')
-        ]);
-
-        $this->mergeConfigFrom(__DIR__ . '/../../..//resources/config/dingding.php', 'dingding');
+            __DIR__ . '/config/dingding.php' => config_path('dingding.php')
+        ], 'config');
     }
 
     public function register()
