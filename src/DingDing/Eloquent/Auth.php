@@ -123,4 +123,18 @@ class Auth implements AuthInterface {
 				'&url=' . $url;
 		return sha1($plain);
 	}
+
+	/**
+	 * 通过CODE换取用户身份
+	 * @param $code
+	 * @return Curl
+	 * @throws DingDingException
+	 */
+	public function getUserInfo($code)
+	{
+		return $this->http->get(Http::joinPath('/user/getuserinfo', [
+			'access_token' => $this->getAccessToken(),
+			'code' => $code
+		]));
+	}
 }
