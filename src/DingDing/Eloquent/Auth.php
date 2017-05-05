@@ -14,9 +14,21 @@ class Auth implements AuthInterface {
 	 */
 	protected $http;
 
+	protected $corpId;
+
+	protected $corpSecret;
+
+	protected $agentId;
+
+	protected $nonceStr;
+
 	public function __construct(Http $http)
 	{
 		$this->http = $http;
+		$this->corpId = config('dingding.corpid');
+		$this->corpSecret = config('dingding.corpsecret');
+		$this->agentId = config('dingding.agent_id');
+		$this->nonceStr = config('dingding.nonce_str');
 	}
 
 	/**
@@ -39,14 +51,76 @@ class Auth implements AuthInterface {
 	 */
 	public function requestAccessToken()
 	{
-
-		$corpId = config('dingding.corpid');
-		$corpSecret = config('dingding.corpsecret');
 		$accessToken = $this->http->get(Http::joinPath('/gettoken', [
-				'corpid' => $corpId,
-				'corpsecret' => $corpSecret
+				'corpid' => $this->corpId,
+				'corpsecret' => $this->corpSecret
 		]));
 
 		return $accessToken['access_token'];
+	}
+
+	/**
+	 * 获取ticket
+	 * @return mixed
+	 * @throws DingDingException
+	 */
+	public function getJsApiTicket()
+	{
+		try{
+			return Cache::remember('ticket', 60, function(){
+				return $this->requestJsApiTicket();
+			});
+		}catch (DingDingException $e) {
+			throw $e;
+		}
+	}
+
+
+	/**
+	 * 请求ticket
+	 * @return Curl
+	 * @throws DingDingException
+	 */
+	public function requestJsApiTicket()
+	{
+		$accessToken = $this->getAccessToken();
+		$response = $this->http->get(Http::joinPath('/get_jsapi_ticket', [
+				'access_token' => $accessToken,
+				'type' => 'jsapi'
+		]));
+
+		return $response['ticket'];
+	}
+
+	public function getConfig()
+	{
+		$corpId = $this->corpId;
+		$agentId = $this->agentId;
+		$nonceStr = $this->nonceStr;
+		$timeStamp = time();
+		$url = url()->current();
+
+		$ticket =$this->getJsApiTicket();
+
+		$signature = self::sign($ticket, $nonceStr, $timeStamp, $url);
+
+		$config = array(
+				'url' => $url,
+				'nonceStr' => $nonceStr,
+				'agentId' => $agentId,
+				'timeStamp' => $timeStamp,
+				'corpId' => $corpId,
+				'signature' => $signature);
+		return json_encode($config, JSON_UNESCAPED_SLASHES);
+	}
+
+
+	public static function sign($ticket, $nonceStr, $timeStamp, $url)
+	{
+		$plain = 'jsapi_ticket=' . $ticket .
+				'&noncestr=' . $nonceStr .
+				'&timestamp=' . $timeStamp .
+				'&url=' . $url;
+		return sha1($plain);
 	}
 }

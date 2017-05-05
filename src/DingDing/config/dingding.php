@@ -10,5 +10,6 @@ return [
     'oapi_host' => 'https://oapi.dingtalk.com',
     'corpid' => '',
     'corpsecret' => '',
-    'is_cache' => true
+    'agent_id'   => '',
+    'nonce_str' => 'abcdefg'
 ];
