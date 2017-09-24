@@ -50,7 +50,8 @@ class AddressBook implements AddressBookInterface
      */
     public function getBranch($id, $lang = 'zh_CN')
     {
-        // TODO: Implement getBranch() method.
+        return $this->http->get(Http::joinPath('/department/get',
+            ['access_token' => $this->auth->getAccessToken(), 'id' => $id, 'lang' => $lang]));
     }
 
     /**
